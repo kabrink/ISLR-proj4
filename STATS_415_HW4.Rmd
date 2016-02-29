@@ -1,0 +1,370 @@
+---
+title: 'STATS 415: Homework 4'
+author: "Kimberly A. Brink"
+output: pdf_document
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage{bm}
+- \pagestyle{fancy}
+- \fancyhead[RO,RE]{Kimberly A. Brink}
+---
+
+1. For the one dimensional (training) data below, give the linear discriminant
+analysis and quadratic discriminant analysis classifiers.
+
+\begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c| }
+    \hline
+    $x$ & -3 & -2 & 0 & 1 & -1 & 2 & 3 & 4 & 5\\ 
+    \hline
+    $y$ & -1 & -1 & -1 & -1 & 1 & 1 & 1 & 1 & 1\\
+    \hline
+  \end{tabular}
+\end{center}
+
+> (a) What are the parameters needed to specify the LDA and QDA
+models respectively? What are their estimated values using the
+training data?
+
+>> **LDA:**
+
+>> **We need to estimate $\pi_k$ $\mu_k$, and $\sigma^2$.**
+
+
+\[
+  \hat{\pi}_k = n_k/n =
+    \left\{
+      \begin{array}{l}
+          \bm{\hat{\pi}_{-1} = 4/9 = 0.444}\\
+          \bm{\hat{\pi}_1 = 5/9 = 0.556}\\
+      \end{array}
+    \right.
+\]
+
+\[
+  \hat{\mu}_k = \frac{1}{n_k} \sum_{y_i=k} x_i=
+    \left\{
+      \begin{array}{l}
+          \bm{\hat{\mu}_{-1} = (-3 + -2 + 0 + 1)/4 = -1}\\
+          \bm{\hat{\mu}_1 = (-1 + 2 + 3 + 4 + 5)/5 = 2.6}\\
+      \end{array}
+    \right.
+\]
+
+>>$\hat{\sigma^2} = \frac{1}{n-K}\sum \sum_{y_i=k} (x_i - \hat{\mu_k})^2$
+
+>>$\hat{\sigma^2} = \frac{1}{9-2} \sum_{y_i = -1} (x_i - (-1))^2 + \sum_{y_i=1} (x_i - 2.6)^2$
+
+>>$\bm{\hat{\sigma^2} = \frac{1}{7}(10+21.2) = 4.457}$
+
+>> **QDA:**
+
+>>**We need to estimate $\mu_k$, $\pi_k$, and $\sigma^2_k$. $\mu_k$ and $\pi_k$ are estimated above.**
+
+\[
+  \sigma_k^2 = \frac{1}{n-1}\sum(x_i - \hat{\mu_k})^2=
+    \left\{
+      \begin{array}{l}
+        \begin{aligned}
+          \bm{\sigma^2_{-1} = \frac{1}{9-1}\sum(x_i - (-1))^2 = 10/8 = 1.25}\\
+          \bm{\sigma^2_{1} = \frac{1}{9-1}\sum(x_i - 2.6)^2 = 21.2/8 = 2.65}\\
+        \end{aligned}
+      \end{array}
+    \right.
+\]
+
+> (b) Write down the discriminant functions.
+
+>>**LDA:**
+
+>>$\hat{\delta}_k(x) = x \cdot \frac{\mu_k}{\sigma^2} - \frac{{\mu_k}^2}{2\sigma^2} + \log (\pi_k)$
+
+>>$\hat{\delta}_{-1}(x) = x \cdot \frac{-1}{4.457} - \frac{(-1)^2}{2(4.457)} + \log(4/9)$
+
+>>$\bm{\hat{\delta}_{-1}(x) = x \cdot (-.2244) - .1122 + (-.8109) = -.2244x -.9231}$
+
+>>$\hat{\delta}_1(x) = x \cdot \frac{2.6}{4.457} - \frac{2.6^2}{2(4.457)} + \log(5/9)$
+
+>>$\bm{\hat{\delta}_1(x) = x \cdot 0.5833 - 0.7584 + (-.5878) = .5833x - 1.3462}$
+
+>>**QDA:**
+
+>>$\hat{\delta}_k(x) = -\frac{1}{2}(x-\mu_k)^T\Sigma^{-1}_{k} (x-\mu_k)-\frac{1}{2}\log|\Sigma_k|+\log \pi_k$
+
+>>$\hat{\delta}_k(x) = -\frac{1}{2\sigma^2_k}(x-\mu_k)^2-\frac{1}{2}\log \sigma^2_k + \log \pi_k$
+
+>>$\hat{\delta}_{-1}(x) = -\frac{1}{2(1.25)}(x-(-1))^2-\frac{1}{2}\log(1.25) + \log(4/9)$
+
+>>$\hat{\delta}_{-1}(x) = -\frac{1}{2.5}(x^2 + 2x + 1) - .9225$
+
+>>$\bm{\hat{\delta}_{-1}(x) = -.4x^2 -.8x - 1.3225}$
+
+>>$\hat{\delta}_{1}(x) = -\frac{1}{2(2.65)}(x-2.6)^2-\frac{1}{2}\log(2.65) + \log(5/9)$
+
+>>$\hat{\delta}_{1}(x) = -.1887(x^2 - 5.2x + 6.76)-1.0751$
+
+>>$\bm{\hat{\delta}_{1}(x) = -.1887x^2 +.9811x -2.351}$
+
+> (c) Compute the training errors using LDA and QDA respectively,
+i.e., the misclassification error when applying your classifier to
+the training data.
+
+>>**LDA:**
+
+>>$\hat{\delta}_{1}(x) > \hat{\delta}_{-1}(x)$
+
+>>$.5833x - 1.346 > -.224x -.9231$
+
+>>$.5833x + .224x > -.9231 + 1.346$
+
+>>$.8073x > .4229$
+
+>>$x > .5238$
+
+>>**Decision Rule: When $\bm{x > .5238}$, assign to K = 1.**
+
+>> **Confusion Matrix: LDA **
+
+\makebox[200pt]{
+  \begin{tabular}{c c | c c }
+     && True & \\
+     &   & -1 & 1 \\ 
+        \hline
+    {Predicted} & -1 & 3  & 1 \\  
+     &1  & 1  & 4    
+  \end{tabular}
+}
+
+>> **The training error rate using LDA was 2/9 = 22.22%**
+
+>>**QDA:**
+
+>>**Decision Rule: Whenever $\hat{\delta}_{1}(x)$ > $\hat{\delta}_{-1}(x)$, assign to K = 1.**
+
+>>**Confusion Matrix: QDA** 
+
+\makebox[200pt]{
+  \begin{tabular}{c c | c c }
+     && True & \\
+     &   & -1 & 1 \\ 
+        \hline
+    {Predicted} & -1 & 3  & 1 \\  
+     &1  & 1  & 4    
+  \end{tabular}
+}
+
+>> **The training error rate using QDA was 2/9 = 22.22%**
+
+> (d) Given a test set of (x, y) pairs 
+
+\begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c| }
+    \hline
+    $x$ & -1.5& -1& 0& 1& 0.5& 1& 2.5& 5\\ 
+    \hline
+    $y$ & -1& -1& -1& -1& 1& 1& 1& 1\\
+    \hline
+  \end{tabular}
+\end{center}
+
+>> what are the test errors?
+
+>>**Confusion Matrix: LDA** 
+
+\makebox[200pt]{
+  \begin{tabular}{c c | c c }
+     && True & \\
+     &   & -1 & 1 \\ 
+        \hline
+    {Predicted} & -1 & 3  & 1 \\  
+     &1  & 1  & 3    
+  \end{tabular}
+}
+
+>>**The test error rate using LDA was 2/8 = 25%**
+
+>>**Confusion Matrix: QDA** 
+
+\makebox[200pt]{
+  \begin{tabular}{c c | c c }
+     && True & \\
+     &   & -1 & 1 \\ 
+        \hline
+    {Predicted} & -1 & 3  & 1 \\  
+     &1  & 1  & 3    
+  \end{tabular}
+}
+
+>>**The test error rate using QDA 2/8 = 25%**
+
+> (e) Which is more suitable for this (training) data set, LDA or QDA? Justify your answer.
+
+>>**Because both models performed identically, I would be hesitant to select one model over the other without collecting more data. If I have to select a model from this data alone, however, I would select LDA. QDA is a more flexible method because it can model a wider range of problems than the linear models. Therefore, QDA will have higher variance. Further, because there was no change in error rate from LDA to QDA, QDA does not seem to reduce bias. LDA likely has the lowest variance and bias of the two models.** 
+
+2. In this problem, you will develop a model to predict whether a given
+car gets high or low gas mileage based on the Auto data set.
+
+(a) Create a binary variable, mpg01, that contains a 1 if mpg contains a value above its median, and a 0 if mpg contains a value below its median.
+
+```{r, include=FALSE}
+library(ISLR)
+```
+
+```{r 2a}
+Auto$mpg01 = factor(ifelse(Auto$mpg>median(Auto$mpg),1,0))
+```
+
+```{r, include=FALSE}
+attach(Auto)
+```
+
+(b) Explore the data graphically in order to investigate the association
+between mpg01 and the other features. Which of the other
+features seem most likely to be useful in predicting mpg01? Describe your findings.
+
+```{r 2b}
+pairs(Auto, col=ifelse(mpg01==1, "red", "blue"))
+```
+
+**Data points are marked in red when mpg01 = 1. Viewing the graphs above the diagonal, we can recognize a relationship between mpg01 and a variable when red points and blue points do not show even or identical distribution across the x-axis. Using this criterion, displacement, horsepower, weight and acceleration will likely be useful in predicting mpg01.**
+
+(c) Split the data into a training set and a test set.
+
+```{r 2c}
+set.seed(1)
+train1 = sample(dim(Auto)[1],dim(Auto)[1]*.7)
+sample1.train <- Auto[train1,] 
+sample1.test <-Auto[-train1,]              
+
+set.seed(2)
+train2 = sample(dim(Auto)[1],dim(Auto)[1]*.7)
+sample2.train <- Auto[train2,] 
+sample2.test <-Auto[-train2,] 
+
+set.seed(3)
+train3 = sample(dim(Auto)[1],dim(Auto)[1]*.7)
+sample3.train <- Auto[train3,] 
+sample3.test <-Auto[-train3,] 
+```
+
+**I split the data set 3 times. The training sets are 70% of the original sample, while the test sets are the remaining 30% of the data points.**
+
+(d) Perform LDA on the training data in order to predict mpg01 using
+the variables that seemed most associated with mpg01 in (b).
+What is the test error of the model obtained?
+
+```{r include = FALSE}
+library(MASS)
+```
+
+```{r 2d}
+lda.fit1 = lda(mpg01~displacement+horsepower+weight+acceleration,data=sample1.train)
+lda.pred1=predict(lda.fit1,sample1.test)
+lda.class1=lda.pred1$class
+mean(lda.class1!=sample1.test$mpg01)
+
+lda.fit2 = lda(mpg01~displacement+horsepower+weight+acceleration,data=sample2.train)
+lda.pred2=predict(lda.fit2,sample2.test)
+lda.class2=lda.pred2$class
+mean(lda.class2!=sample2.test$mpg01)
+
+lda.fit3 = lda(mpg01~displacement+horsepower+weight+acceleration,data=sample3.train)
+lda.pred3=predict(lda.fit3,sample3.test)
+lda.class3=lda.pred3$class
+mean(lda.class3!=sample3.test$mpg01)
+```
+
+**The test error rates of LDA for my three data sets ranged from `r round(min(c(mean(lda.class1!=sample1.test$mpg01),mean(lda.class2!=sample2.test$mpg01),mean(lda.class3!=sample3.test$mpg01))),4)*100`% to `r round(max(c(mean(lda.class1!=sample1.test$mpg01),mean(lda.class2!=sample2.test$mpg01),mean(lda.class3!=sample3.test$mpg01))),4)*100`%.**
+
+(e) Perform QDA on the training data in order to predict mpg01 using
+the variables that seemed most associated with mpg01 in (b).
+What is the test error of the model obtained?
+
+```{r include=FALSE}
+library(MASS)
+```
+
+```{r 2e}
+qda.fit1 = qda(mpg01~displacement+horsepower+weight+acceleration,data=sample1.train)
+qda.pred1=predict(qda.fit1,sample1.test)
+qda.class1=qda.pred1$class
+mean(qda.class1!=sample1.test$mpg01)
+
+qda.fit2 = qda(mpg01~displacement+horsepower+weight+acceleration,data=sample2.train)
+qda.pred2=predict(qda.fit2,sample2.test)
+qda.class2=qda.pred2$class
+mean(qda.class2!=sample2.test$mpg01)
+
+qda.fit3 = qda(mpg01~displacement+horsepower+weight+acceleration,data=sample3.train)
+qda.pred3=predict(qda.fit3,sample3.test)
+qda.class3=qda.pred3$class
+mean(qda.class3!=sample3.test$mpg01)
+```
+
+**The test error rates of QDA for my three data sets ranged from `r round(min(c(mean(qda.class1!=sample1.test$mpg01),mean(qda.class2!=sample2.test$mpg01),mean(qda.class3!=sample3.test$mpg01))),4)*100`% to `r round(max(c(mean(qda.class1!=sample1.test$mpg01),mean(qda.class2!=sample2.test$mpg01),mean(qda.class3!=sample3.test$mpg01))),4)*100`%, thus performing as well as LDA.**
+
+(f) Perform logistic regression on the training data in order to predict
+mpg01 using the variables that seemed most associated with
+mpg01 in (b). What is the test error of the model obtained?
+
+```{r 2f}
+glm.fit1=glm(mpg01~displacement+horsepower+weight+acceleration,data=sample1.train, family=binomial)
+glm.probs1 = predict(glm.fit1,newdata=sample1.test,type='response')
+glm.pred1=rep(0, dim(sample1.test)[1])
+glm.pred1[glm.probs1>.5]=1
+mean(glm.pred1!=sample1.test$mpg01)
+
+glm.fit2=glm(mpg01~displacement+horsepower+weight+acceleration,data=sample2.train, family=binomial)
+glm.probs2 = predict(glm.fit2,type="response",newdata=sample2.test)
+glm.pred2=rep(0, dim(sample2.test)[1])
+glm.pred2[glm.probs2>.5]=1
+mean(glm.pred2!=sample2.test$mpg01)
+
+glm.fit3=glm(mpg01~displacement+horsepower+weight+acceleration,data=sample3.train, family=binomial)
+glm.probs3 = predict(glm.fit3,type="response",newdata=sample3.test)
+glm.pred3=rep(0, dim(sample3.test)[1])
+glm.pred3[glm.probs3>.5]=1
+mean(glm.pred3!=sample3.test$mpg01)
+```
+
+**The test error rates of logistic regression for my three data sets ranged from `r round(min(c(mean(glm.pred1!=sample1.test$mpg01),mean(glm.pred2!=sample2.test$mpg01),mean(glm.pred3!=sample3.test$mpg01))),4)*100`% to `r round(max(c(mean(glm.pred1!=sample1.test$mpg01),mean(glm.pred2!=sample2.test$mpg01),mean(glm.pred3!=sample3.test$mpg01))),4)*100`%, thus it performed as well as LDA and QDA.**
+
+(g) Perform KNN on the training data, with several values of K, in
+order to predict mpg01. Use only the variables that seemed most
+associated with mpg01 in (b). What test errors do you obtain?
+Which value of K seems to perform the best on this data set?
+
+```{r include=FALSE}
+library(class)
+```
+
+```{r 2g}
+train1.X=cbind(sample1.train$displacement, sample1.train$horsepower, sample1.train$weight, sample1.train$acceleration)
+test1.X=cbind(sample1.test$displacement, sample1.test$horsepower, sample1.test$weight, sample1.test$acceleration)
+train1.mpg01=sample1.train$mpg01
+knn.pred1.k1=knn(train1.X,test1.X,train1.mpg01,k=1)
+mean(knn.pred1.k1!=sample1.test$mpg01)
+knn.pred1.k3=knn(train1.X,test1.X,train1.mpg01,k=3)
+mean(knn.pred1.k3!=sample1.test$mpg01)
+
+train2.X=cbind(sample2.train$displacement, sample2.train$horsepower, sample2.train$weight, sample2.train$acceleration)
+test2.X=cbind(sample2.test$displacement, sample2.test$horsepower, sample2.test$weight, sample2.test$acceleration)
+train2.mpg01=sample2.train$mpg01
+knn.pred2.k1=knn(train2.X,test2.X,train2.mpg01,k=1)
+mean(knn.pred2.k1!=sample2.test$mpg01)
+knn.pred2.k3=knn(train2.X,test2.X,train2.mpg01,k=3)
+mean(knn.pred2.k3!=sample2.test$mpg01)
+
+train3.X=cbind(sample3.train$displacement, sample3.train$horsepower, sample3.train$weight, sample3.train$acceleration)
+test3.X=cbind(sample3.test$displacement, sample3.test$horsepower, sample3.test$weight, sample3.test$acceleration)
+train3.mpg01=sample3.train$mpg01
+knn.pred3.k1=knn(train3.X,test3.X,train3.mpg01,k=1)
+mean(knn.pred3.k1!=sample3.test$mpg01)
+knn.pred3.k3=knn(train3.X,test3.X,train3.mpg01,k=3)
+mean(knn.pred3.k3!=sample3.test$mpg01)
+```
+**The test error rates of KNN (k=1) for my three data sets ranged from `r round(min(c(mean(knn.pred1.k1!=sample1.test$mpg01),mean(knn.pred2.k1!=sample2.test$mpg01),mean(knn.pred3.k1!=sample3.test$mpg01))),4)*100`% to `r round(max(c(mean(knn.pred1.k1!=sample1.test$mpg01),mean(knn.pred2.k1!=sample2.test$mpg01),mean(knn.pred3.k1!=sample3.test$mpg01))),4)*100`%.**
+
+**The test error rates of KNN (k=3) for my three data sets ranged from `r round(min(c(mean(knn.pred1.k3!=sample1.test$mpg01),mean(knn.pred2.k3!=sample2.test$mpg01),mean(knn.pred3.k3!=sample3.test$mpg01))),4)*100`% to `r round(max(c(mean(knn.pred1.k3!=sample1.test$mpg01),mean(knn.pred2.k3!=sample2.test$mpg01),mean(knn.pred3.k3!=sample3.test$mpg01))),4)*100`%.**
+
+**k=1 appears to work similarly to k=3. Neither of the KNN performed better than the other models in question 2.**
